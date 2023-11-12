@@ -7,9 +7,11 @@
 
 import UIKit
 
-class MovieListViewController: UIViewController, Presenter {
+class MovieListViewController: UIViewController {
     
     internal var viewModel: MovieListViewModel?
+    
+    internal var isLoadingActive: Bool = true
     
     // MARK: - Life cycle
     override func viewDidLoad() {
@@ -23,7 +25,10 @@ class MovieListViewController: UIViewController, Presenter {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        viewModel?.fetchMovieList()
+        
+        Queue.main.executeAfter(delay: .oneSecond) {
+            self.viewModel?.fetchMovieList()
+        }
     }
         
     // MARK: - Collection view
@@ -54,6 +59,8 @@ class MovieListViewController: UIViewController, Presenter {
         
         collectionView.register(MovieCollectionViewCell.self,
                                 forCellWithReuseIdentifier: MovieCollectionViewCell.reuseId)
+        collectionView.register(SkeletonCollectionViewCell.self,
+                                forCellWithReuseIdentifier: SkeletonCollectionViewCell.reuseId)
         
         let width = (view.frame.width - (leftRightPadding*2) - interItemSpacing) / 2
         defaultCellSize = CGSize(width: width, height: width * widthHeightRatio)
@@ -68,7 +75,8 @@ class MovieListViewController: UIViewController, Presenter {
     }()
     
     func zoomIntoIndexPath(_ indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? MovieCollectionViewCell else {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? MovieCollectionViewCell,
+              let movieInfo = viewModel?.getItemForIndexPath(indexPath) as? MovieInfo else {
             return
         }
         
@@ -81,7 +89,8 @@ class MovieListViewController: UIViewController, Presenter {
                                height: defaultCellSize.height)
         
         wrapperImageView.image = cell.getMovieImage()
-                
+        wrapperImageView.isHidden = false
+        
         UIView.animate(withDuration: 0.2, animations: {
             
             self.view.transform = CGAffineTransform.init(scaleX: scale, y: scale)
@@ -94,7 +103,9 @@ class MovieListViewController: UIViewController, Presenter {
              if finished {
                  debugPrint("Zoom in done")
                  
-                 let vc = MovieDetailViewController(movieImage: self.wrapperImageView.image) {
+                 let vc = MovieDetailViewController(movieImage: self.wrapperImageView.image,
+                                                    movieData: movieInfo) {
+                     
                      self.collectionView.fadeInAsync(duration: 0)
                      self.zoomOut()
                  }
@@ -116,22 +127,27 @@ class MovieListViewController: UIViewController, Presenter {
             self.collectionView.layer.opacity = 1
         },completion:{finished in
             if finished {
+                self.wrapperImageView.isHidden = true
                 debugPrint("Zoom out done")
             }
         })
-    }
+    }    
+}
+
+extension MovieListViewController: Presenter {
     
     // MARK: - Presenting data & loading
     func presentData() {
+        collectionView.isScrollEnabled = !isLoadingActive
         collectionView.reloadAsync()
     }
     
     func presentLoading() {
-        
+        isLoadingActive = true
+        collectionView.isScrollEnabled = !isLoadingActive
     }
     
     func hideLoading() {
-        
+        isLoadingActive = false
     }
-    
 }

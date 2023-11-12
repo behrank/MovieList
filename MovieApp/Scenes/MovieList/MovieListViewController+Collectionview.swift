@@ -9,19 +9,31 @@ import UIKit
 
 extension MovieListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if isLoadingActive {
+            return 6
+        }
         return viewModel?.getTotalResultCount() ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.reuseId, 
-                                                            for: indexPath) as? MovieCollectionViewCell,
-              let data = viewModel?.getItemForIndexPath(indexPath) as? MovieInfo else {
-            return UICollectionViewCell(frame: .zero)
+        if isLoadingActive {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SkeletonCollectionViewCell.reuseId,
+                                                                for: indexPath) as? SkeletonCollectionViewCell else {
+                return UICollectionViewCell(frame: .zero)
+            }
+            cell.setupCell()
+            return cell
+        } else {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.reuseId,
+                                                                for: indexPath) as? MovieCollectionViewCell,
+                  let data = viewModel?.getItemForIndexPath(indexPath) as? MovieInfo else {
+                return UICollectionViewCell(frame: .zero)
+            }
+            
+            cell.setupCellWithMovieInfo(data)
+            return cell
         }
-        
-        cell.setupCellWithMovieInfo(data)
-        return cell
     }
 }
 

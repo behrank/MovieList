@@ -33,14 +33,17 @@ class MovieDetailViewController: UIViewController {
         setupContainerView()
         setupStackView()
         setupMovieImageView()
-       // setupTitle()
+        setupTitle()
         
         setupBackButton()
     }
     
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
     }
     
     // MARK: - UI Generation
@@ -49,6 +52,8 @@ class MovieDetailViewController: UIViewController {
         scroll.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         scroll.showsVerticalScrollIndicator = false
         scroll.showsHorizontalScrollIndicator = false
+        scroll.contentInsetAdjustmentBehavior = UIScrollView.ContentInsetAdjustmentBehavior.never
+
         return scroll
     }()
     
@@ -64,12 +69,14 @@ class MovieDetailViewController: UIViewController {
     private func setupContainerView() {
         scrollView.addSubviews(views: containerView)
         containerView.fillSuperview()
+        scrollView.backgroundColor = .red
     }
     
     lazy private var stackView: UIStackView = {
         let stackView = UIStackView(frame: .zero)
         stackView.axis = .vertical
         stackView.spacing = 0
+        
         return stackView
     }()
     

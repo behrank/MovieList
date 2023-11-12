@@ -312,12 +312,4 @@ extension MovieDetailViewController: Presenter {
         
         stackView.addVerticalSpacer(height: 32)
     }
-    
-    func presentLoading() {
-        //No need
-    }
-    
-    func hideLoading() {
-        //No need
-    }
 }

@@ -7,8 +7,20 @@
 
 import Foundation
 
-protocol Presenter {
-    func presentData()
+protocol Loadable {
+    
+    var loadingView: LoadingView? { get set }
+    
     func presentLoading()
     func hideLoading()
+}
+
+protocol Presenter {
+    
+    func presentData()
+    
+}
+
+protocol LoadablePresenter: Presenter, Loadable {
+    
 }

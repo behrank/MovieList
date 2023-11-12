@@ -11,9 +11,9 @@ import Combine
 class MovieListViewModel: PagedNetworkableFetcher {
     
     // MARK: - Required Init properties
-    var presenter: Presenter
-    
-    init(prensenterVc: Presenter) {
+    var presenter: LoadablePresenter
+        
+    init(prensenterVc: LoadablePresenter) {
         presenter = prensenterVc
     }
     
@@ -26,9 +26,27 @@ class MovieListViewModel: PagedNetworkableFetcher {
         return dataContainer[indexPath.row]
     }
     
-    func fetchMovieList() {
+    func checkNextPageRequired(index: Int) {
+        if dataContainer.count - index == 4 {
+            fetchMovieList(shouldFetchNextpage: true)
+        }
+    }
+    
+    func fetchMovieList(shouldFetchNextpage: Bool = false) {
         
-        let movieFetchRequest: AnyPublisher<MovieListResponse, Error> = fetch(path: "discover/movie", method: .get)
+        if isFetching {
+            return
+        }
+        
+        if shouldFetchNextpage {
+            pageNumber += 1
+        }
+        
+        presenter.presentLoading()
+        
+        let movieFetchRequest: AnyPublisher<MovieListResponse, Error> = fetch(path: "discover/movie",
+                                                                              method: .get,
+                                                                              queryParams: [["page" : pageNumber.description]])
         
         movieFetchRequest.receive(on: DispatchQueue.main)
         .sink(receiveCompletion: { err in
@@ -40,9 +58,9 @@ class MovieListViewModel: PagedNetworkableFetcher {
             }
         }, receiveValue: { res in
             
-            self.totalPages = res.totalPages
-            self.totalResults = res.totalResults
-            self.pageNumber = res.page
+            self.totalPages = res.totalPages ?? 0
+            self.totalResults = res.totalResults ?? 0
+            self.pageNumber = res.page ?? 0
             
             if let movieInfo = res.results {
                 self.dataContainer.append(contentsOf: movieInfo)

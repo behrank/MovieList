@@ -11,15 +11,19 @@ class MovieListViewController: UIViewController {
     
     internal var viewModel: MovieListViewModel?
     
-    internal var isLoadingActive: Bool = true
+    internal var isLoadingShimmerActive: Bool = true
+    var loadingView: LoadingView?
     
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
+        
         viewModel = MovieListViewModel(prensenterVc: self)
         
         setupCollectionView()
+        setupLoading()
+        
         view.addSubview(wrapperImageView)
     }
     
@@ -28,6 +32,21 @@ class MovieListViewController: UIViewController {
         
         Queue.main.executeAfter(delay: .oneSecond) {
             self.viewModel?.fetchMovieList()
+        }
+    }
+    
+    // MARK: - Loading
+    private func setupLoading() {
+        loadingView = LoadingView()
+        
+        if let loadingView {
+            view.addSubview(loadingView)
+
+            loadingView.anchorCenterXToSuperview()
+            loadingView.setMargins(.top(value: 64))
+            loadingView.setHeight(24)
+            loadingView.setWidth(84)
+            loadingView.isHidden = true
         }
     }
         
@@ -134,20 +153,27 @@ class MovieListViewController: UIViewController {
     }    
 }
 
-extension MovieListViewController: Presenter {
+extension MovieListViewController: LoadablePresenter {
     
     // MARK: - Presenting data & loading
     func presentData() {
-        collectionView.isScrollEnabled = !isLoadingActive
+        collectionView.isScrollEnabled = !isLoadingShimmerActive
         collectionView.reloadAsync()
     }
     
     func presentLoading() {
-        isLoadingActive = true
-        collectionView.isScrollEnabled = !isLoadingActive
+        collectionView.isScrollEnabled = !isLoadingShimmerActive
+        
+        if isLoadingShimmerActive == false {
+            loadingView?.isHidden = false
+        }
     }
     
     func hideLoading() {
-        isLoadingActive = false
+        isLoadingShimmerActive = false
+        
+        Queue.main.executeAfter(delay: DelayTime.oneSecond) {
+            self.loadingView?.isHidden = true
+        }
     }
 }

@@ -9,7 +9,7 @@ import UIKit
 
 extension MovieListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if isLoadingActive {
+        if isLoadingShimmerActive {
             return 6
         }
         return viewModel?.getTotalResultCount() ?? 0
@@ -17,7 +17,7 @@ extension MovieListViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        if isLoadingActive {
+        if isLoadingShimmerActive {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SkeletonCollectionViewCell.reuseId,
                                                                 for: indexPath) as? SkeletonCollectionViewCell else {
                 return UICollectionViewCell(frame: .zero)
@@ -41,6 +41,11 @@ extension MovieListViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         zoomIntoIndexPath(indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        viewModel?.checkNextPageRequired(index: indexPath.row)
     }
 }
 

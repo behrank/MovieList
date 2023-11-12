@@ -10,6 +10,8 @@ import Combine
 
 protocol DataFetcher {
     var baseUrl: String { get }
-    func fetch<T: Codable>(path: String, method: HTTPMethod) -> AnyPublisher<T, Error>
+    func fetch<T: Codable>(path: String,
+                           method: HTTPMethod,
+                           queryParams: [[String: String]]) -> AnyPublisher<T, Error>
 }
 

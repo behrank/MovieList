@@ -14,14 +14,20 @@ class NetworkableFetcher: DataFetcher {
     private let apiKey = "c9856d0cb57c3f14bf75bdc6c063b8f3"
     private let headers = ["accept": "application/json"]
     
+    internal var isFetching: Bool = false
+
     internal var subscriptions = Set<AnyCancellable>()
     internal var dataContainer: [Codable] = []
     
-    func fetch<T>(path: String, method: HTTPMethod) -> AnyPublisher<T, Error> where T : Decodable, T : Encodable {
+    func fetch<T>(path: String, method: HTTPMethod, queryParams: [[String: String]] = []) -> AnyPublisher<T, Error> where T : Decodable, T : Encodable {
         
         var url = URL(string: baseUrl.appending(path))!
                 
         url.withQuery(["api_key": apiKey])
+        
+        for keyVal in queryParams {
+            url.withQuery(keyVal)
+        }
         
         var request = URLRequest(url: url,
                                           cachePolicy: .useProtocolCachePolicy,
@@ -46,7 +52,7 @@ class NetworkableFetcher: DataFetcher {
 }
 
 class PagedNetworkableFetcher: NetworkableFetcher {
-    internal var pageNumber: Int?   = 0
-    internal var totalPages: Int?   = 0
-    internal var totalResults: Int? = 0
+    internal var pageNumber: Int   = 1
+    internal var totalPages: Int   = 0
+    internal var totalResults: Int = 0
 }

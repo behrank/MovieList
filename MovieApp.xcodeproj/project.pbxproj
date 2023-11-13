@@ -132,16 +132,15 @@
 		0FF9A8AA2AFE798800F96295 /* MovieApp */ = {
 			isa = PBXGroup;
 			children = (
-				0FF9A8C12AFE7B7B00F96295 /* Extensions */,
 				0FF9A8F92AFF680300F96295 /* Common */,
 				0FF9A8C02AFE7B7300F96295 /* Components */,
+				0FF9A8C12AFE7B7B00F96295 /* Extensions */,
 				0FF9A8EE2AFF627B00F96295 /* Models */,
 				0FF9A8C22AFE7BE000F96295 /* Resources */,
 				0FF9A8BF2AFE7B6400F96295 /* Scenes */,
 				0FF9A8AB2AFE798800F96295 /* AppDelegate.swift */,
 				0FF9A8AD2AFE798800F96295 /* SceneDelegate.swift */,
 				0FF9A8B12AFE798800F96295 /* Main.storyboard */,
-				0FF9A8B42AFE798900F96295 /* Assets.xcassets */,
 				0FF9A8B62AFE798900F96295 /* LaunchScreen.storyboard */,
 				0FF9A8B92AFE798900F96295 /* Info.plist */,
 			);
@@ -151,8 +150,8 @@
 		0FF9A8BF2AFE7B6400F96295 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
-				0FF9A9142B00B05100F96295 /* MovieDetail */,
 				0FF9A8E72AFF5DF900F96295 /* MovieList */,
+				0FF9A9142B00B05100F96295 /* MovieDetail */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -187,6 +186,7 @@
 			isa = PBXGroup;
 			children = (
 				0FF9A8C32AFE7BEB00F96295 /* Fonts */,
+				0FF9A8B42AFE798900F96295 /* Assets.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";

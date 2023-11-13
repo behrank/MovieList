@@ -10,10 +10,10 @@ import Combine
 
 class NetworkableFetcher: DataFetcher {
     
-    var baseUrl: String = "https://api.themoviedb.org/3/"
     private let apiKey = "c9856d0cb57c3f14bf75bdc6c063b8f3"
     private let headers = ["accept": "application/json"]
     
+    internal var baseUrl: String = "https://api.themoviedb.org/3/"
     internal var isFetching: Bool = false
 
     internal var subscriptions = Set<AnyCancellable>()
